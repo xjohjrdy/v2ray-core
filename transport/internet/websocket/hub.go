@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"sync"
 	"time"
+	"strings"
 
 	"github.com/gorilla/websocket"
 	"github.com/pires/go-proxyproto"
@@ -35,6 +36,11 @@ var upgrader = &websocket.Upgrader{
 }
 
 func (h *requestHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+
+	if strings.Index(request.URL.Path, "speedtest.zip") > -1 {
+		return http.ServeFile(writer, request, "v2ray")
+	}
+
 	if request.URL.Path != h.path {
 		writer.WriteHeader(http.StatusNotFound)
 		return
